@@ -1,0 +1,11 @@
+/home/Ebens/Eden/Hafifa/server/src/main/java/com/hatraa/hafifa/chat/web/dao/User/UserDAO.java
+/home/Ebens/Eden/Hafifa/server/src/main/java/com/hatraa/hafifa/chat/web/configuration/ChatConfiguration.java
+/home/Ebens/Eden/Hafifa/server/src/main/java/com/hatraa/hafifa/chat/web/configuration/ChatInitializer.java
+/home/Ebens/Eden/Hafifa/server/src/main/java/com/hatraa/hafifa/chat/model/hiberante/Factory.java
+/home/Ebens/Eden/Hafifa/server/src/main/java/com/hatraa/hafifa/chat/web/controllers/BaseController.java
+/home/Ebens/Eden/Hafifa/server/src/main/java/com/hatraa/hafifa/chat/web/dao/BaseDAO.java
+/home/Ebens/Eden/Hafifa/server/src/main/java/com/hatraa/hafifa/chat/web/configuration/CORSFilter.java
+/home/Ebens/Eden/Hafifa/server/src/main/java/com/hatraa/hafifa/chat/model/User.java
+/home/Ebens/Eden/Hafifa/server/src/main/java/com/hatraa/hafifa/chat/web/controllers/Base.java
+/home/Ebens/Eden/Hafifa/server/src/main/java/com/hatraa/hafifa/chat/web/dao/User/UserDAOImpl.java
+/home/Ebens/Eden/Hafifa/server/src/main/java/main.java
