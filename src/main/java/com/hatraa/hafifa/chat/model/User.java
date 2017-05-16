@@ -15,18 +15,25 @@ import org.hibernate.validator.constraints.*;
 
 @Entity
 @Table(name="USERS")
+@NamedQueries({
+        @NamedQuery(name = "getByEmail", query = "from User where email=:email")
+})
 public class User implements Serializable{
     private int id;
     private String name;
+    private String password;
+    private String salt;
     private String email;
 
     public User() {
         id = 0;
     }
 
-    public User(int id, String username, String email) {
-        this.id = id;
+    public User(String username, String password, String salt, String email) {
+        this.id = 0;
         this.name = username;
+        this.password = password;
+        this.salt = salt;
         this.email = email;
     }
 
@@ -49,6 +56,16 @@ public class User implements Serializable{
     public void setName(String name) {
         this.name = name;
     }
+
+    @Column(name="PASSWORD", nullable = false)
+    public String getPassword() { return password; }
+
+    public void setPassword(String password) { this.password = password; }
+
+    @Column(name="SALT", nullable = false)
+    public String getSalt() { return salt; }
+
+    public void setSalt(String salt) { this.salt = salt; }
 
     @Column(name="EMAIL", unique = true, nullable = false)
     public String getEmail() {

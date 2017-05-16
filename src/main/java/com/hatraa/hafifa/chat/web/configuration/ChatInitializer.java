@@ -1,5 +1,6 @@
 package com.hatraa.hafifa.chat.web.configuration;
 
+import org.springframework.context.annotation.Import;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 import javax.servlet.Filter;
@@ -17,12 +18,16 @@ public class ChatInitializer extends AbstractAnnotationConfigDispatcherServletIn
 
     @Override
     protected String[] getServletMappings() {
-        return new String[] {"/"};
+        return new String[] {"/api/*"};
     }
 
     @Override
     protected Filter[] getServletFilters() {
-        Filter[] singleton = {new CORSFilter()};
+        Filter[] singleton = {
+                new CORSFilter(),
+                new JwtFilter()
+        };
+
         return singleton;
     }
 }
