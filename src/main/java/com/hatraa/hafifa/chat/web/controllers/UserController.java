@@ -88,6 +88,7 @@ public class UserController {
         return new ResponseEntity(new Object() {
             public final String token = usrToken;
         }, HttpStatus.OK);
+        //return new ResponseEntity<String>(token, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)

@@ -1,5 +1,6 @@
 package com.hatraa.hafifa.chat.services;
 
+import com.hatraa.hafifa.chat.model.User;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.impl.crypto.MacProvider;
 import org.jose4j.lang.ByteUtil;
@@ -11,6 +12,7 @@ import io.jsonwebtoken.*;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
+import javax.servlet.http.HttpServletRequest;
 import java.security.*;
 import java.util.Date;
 

@@ -1,6 +1,8 @@
 package com.hatraa.hafifa.chat.web.configuration;
 
+import com.hatraa.hafifa.chat.model.User;
 import com.hatraa.hafifa.chat.services.AuthService;
+import com.hatraa.hafifa.chat.web.dao.User.UserDAO;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.SignatureException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,9 @@ public class JwtFilter implements Filter {
     @Autowired
     AuthService authService;
 
+    @Autowired
+    UserDAO userDAO;
+
     @Override
     public void init(FilterConfig config) {
         ServletContext servletContext = config.getServletContext();
@@ -33,6 +38,7 @@ public class JwtFilter implements Filter {
 
         AutowireCapableBeanFactory autowireCapableBeanFactory = webApplicationContext.getAutowireCapableBeanFactory();
         autowireCapableBeanFactory.configureBean(this, "authService");
+        autowireCapableBeanFactory.configureBean(this, "userDAO");
     }
 
     @Override
@@ -58,7 +64,8 @@ public class JwtFilter implements Filter {
 
             try {
                 Claims claims = authService.decodeUser(token);
-                request.setAttribute("claims", claims);
+                User currentUser = userDAO.getById(Integer.parseInt(claims.getSubject()));
+                request.setAttribute("user", currentUser);
             }
             catch (SignatureException ex) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

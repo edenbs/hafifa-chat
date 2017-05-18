@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface BaseDAO<T> {
     List<T> getAll();
-    User getById(int id);
+    T getById(int id);
     Serializable save(T user);
     void delete(int id);
 }
