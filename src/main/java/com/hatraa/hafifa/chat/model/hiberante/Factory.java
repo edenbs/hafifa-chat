@@ -10,11 +10,20 @@ import org.springframework.cglib.core.Local;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.PropertySources;
+import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import javax.naming.InitialContext;
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,15 +34,18 @@ import java.util.Properties;
 @EnableTransactionManagement
 public class Factory {
 
-    @Bean(name="SessionFactory")
-    public LocalSessionFactoryBean getSessionFactory() {
-        LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
+    @Bean(name="entityManagerFactory")
+    public LocalContainerEntityManagerFactoryBean getEntityManagerFactory() {
+        LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
 
-        sessionFactory.setPackagesToScan(new String [] { "com.hatraa.hafifa.chat.model" });
-        sessionFactory.setHibernateProperties(Environment.getProperties());
-        sessionFactory.setDataSource(getDataSource());
+        em.setPackagesToScan(new String [] { "com.hatraa.hafifa.chat.model" });
+        em.setDataSource(getDataSource());
 
-        return sessionFactory;
+        JpaVendorAdapter hibernateAdapter = new HibernateJpaVendorAdapter();
+        em.setJpaVendorAdapter(hibernateAdapter);
+        em.setJpaProperties(Environment.getProperties());
+
+        return em;
     }
 
     private DataSource getDataSource() {
@@ -49,32 +61,16 @@ public class Factory {
     }
 
     @Bean
-    @Autowired
-    public HibernateTransactionManager transactionManager(SessionFactory sessionFactory) {
-        HibernateTransactionManager txManager = new HibernateTransactionManager();
-        txManager.setSessionFactory(sessionFactory);
-        return txManager;
+    public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
+        return new PersistenceExceptionTranslationPostProcessor();
     }
 
+    @Bean(name="transactionManager")
+    @Autowired
+    public PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
+        JpaTransactionManager txManager = new JpaTransactionManager();
+        txManager.setEntityManagerFactory(entityManagerFactory);
 
-
-    /*private static final LocalSessionFactoryBean sessionFactory;
-    static {
-        try {
-            sessionFactory = new LocalSessionFactoryBean();
-        }
-        catch (Throwable ex) {
-            throw new ExceptionInInitializerError(ex);
-        }
-    }*/
-
-    /*@Bean(name = "session")
-    Session sessionFactory() {
-        return sessionFactory.openSession();
-    }*/
-
-
-    /*public static Session getSession() throws HibernateException {
-        return sessionFactory.openSession();
-    }*/
+        return txManager;
+    }
 }

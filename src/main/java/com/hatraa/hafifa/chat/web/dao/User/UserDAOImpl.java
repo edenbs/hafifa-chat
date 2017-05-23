@@ -5,14 +5,18 @@ import com.hatraa.hafifa.chat.model.hiberante.Factory;
 import com.hatraa.hafifa.chat.web.dao.BaseDAO;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.transaction.Transactional;
 import java.io.Serializable;
 import java.util.*;
@@ -21,38 +25,34 @@ import java.util.*;
 @Transactional
 public class UserDAOImpl implements UserDAO {
 
-    @Autowired
-    private SessionFactory sessionFactory;
-
-    private Session getCurrentSession() {
-        /*SessionFactory sessionFactory = (SessionFactory)factory.sessionFactory();
-        return sessionFactory.getCurrentSession();*/
-        return this.sessionFactory.getCurrentSession();
-    }
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public List<User> getAll() {
-        Session session = getCurrentSession();
-
-        return session.createQuery("From User").list();
+        return entityManager.createQuery("From User").getResultList();
     }
 
     public User getById(int id) {
-        return getCurrentSession().get(User.class, id);
+        Query query =  entityManager.createQuery("From User where id=:id");
+        query.setParameter("id", id);
+
+        return (User)query.getSingleResult();
     }
 
     public Serializable save(User user) {
-        return getCurrentSession().save(user);
+        entityManager.persist(user);
+        return user.getId();
     }
 
     public void delete(int id) {
         User user = getById(id);
-        getCurrentSession().delete(user);
+        entityManager.remove(user);
     }
 
     public User getByEmail(String email) {
-        Query query = getCurrentSession().getNamedQuery("getByEmail");
+        Query query = entityManager.createNamedQuery("getByEmail");
         query.setParameter("email", email);
 
-        return (User)(query.uniqueResult());
+        return (User)(query.getSingleResult());
     }
 }
