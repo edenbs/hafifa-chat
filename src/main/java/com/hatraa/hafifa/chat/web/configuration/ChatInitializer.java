@@ -1,6 +1,7 @@
 package com.hatraa.hafifa.chat.web.configuration;
 
-import org.springframework.context.annotation.Import;
+import com.hatraa.hafifa.chat.web.filters.CORSFilter;
+import com.hatraa.hafifa.chat.web.filters.JwtFilter;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 import javax.servlet.Filter;

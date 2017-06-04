@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -24,6 +25,7 @@ import java.util.List;
 @Controller
 @RestController
 @RequestMapping("/user")
+@Transactional
 public class UserController {
 
     @Autowired
@@ -62,7 +64,6 @@ public class UserController {
             String hashedPwd = authService.hashPassword(registerData.getPassword(), salt);
             User user = new User(registerData.getUsername(), hashedPwd, salt, registerData.getEmail());
             String id = userDAO.save(user).toString();
-            String token = authService.encodeUser(id);
 
             return new ResponseEntity(HttpStatus.CREATED);
         }
@@ -88,7 +89,6 @@ public class UserController {
         return new ResponseEntity(new Object() {
             public final String token = usrToken;
         }, HttpStatus.OK);
-        //return new ResponseEntity<String>(token, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)

@@ -5,6 +5,9 @@ import org.hibernate.mapping.UniqueKey;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.hibernate.validator.constraints.*;
 
 @javax.persistence.SequenceGenerator(
@@ -24,6 +27,7 @@ public class User implements Serializable{
     private String password;
     private String salt;
     private String email;
+    private List<Chat> chats;
 
     public User() {
         id = 0;
@@ -35,6 +39,8 @@ public class User implements Serializable{
         this.password = password;
         this.salt = salt;
         this.email = email;
+
+        this.chats = new ArrayList<Chat>();
     }
 
     //region Getters/Setters
@@ -75,6 +81,15 @@ public class User implements Serializable{
     public void setEmail(String email) {
         this.email = email;
     }
+
+    @ManyToMany(mappedBy ="participants")
+    public List<Chat> getChats() {
+        return this.chats;
+    }
+
+    public void setChats(List<Chat> chats) {
+        this.chats = chats;
+    }
     //endregion
 
     @Override
@@ -94,5 +109,15 @@ public class User implements Serializable{
     @Override
     public String toString() {
         return "User [id= " + id + ", username = " + name + ", email= " + email + "]";
+    }
+
+    public void addChat(Chat chat) {
+        chats.add(chat);
+        chat.addParticipant(this);
+    }
+
+    public void removeChat(Chat chat) {
+        this.chats.remove(chat);
+        chat.removeParticipant(this);
     }
 }

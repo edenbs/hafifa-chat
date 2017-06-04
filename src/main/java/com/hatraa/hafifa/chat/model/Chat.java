@@ -1,8 +1,8 @@
 package com.hatraa.hafifa.chat.model;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @SequenceGenerator(name = "CHAT_SEQ", sequenceName = "CHAT_SEQ", allocationSize = 1)
@@ -15,6 +15,11 @@ public class Chat implements Serializable {
     private boolean isDirect;
     private List<Message> messages;
 
+    public Chat() {
+        this.participants = new ArrayList<User>();
+        this.messages = new ArrayList<Message>();
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "CHAT_SEQ")
     public int getId() {
@@ -25,8 +30,7 @@ public class Chat implements Serializable {
         this.id = id;
     }
 
-    @NotNull
-    @OneToMany(targetEntity = User.class)
+    @ManyToMany(targetEntity = User.class)
     @JoinTable(
             name = "USER_CHAT",
             joinColumns = { @JoinColumn(name = "CHAT_ID", referencedColumnName = "ID")},
@@ -40,7 +44,7 @@ public class Chat implements Serializable {
         this.participants = users;
     }
 
-    @Column(nullable = false)
+    @Column(name="NAME", nullable = true)
     public String getName(){
         return name;
     }
@@ -76,5 +80,29 @@ public class Chat implements Serializable {
     // ???
     public void removeMessage(Message message) {
         this.messages.remove(message);
+        message.setChatID(null);
+    }
+
+    public boolean addParticipant(User user) {
+        if (isDirect && this.getParticipants().size() == 2) {
+            return false;
+        }
+
+        this.participants.add(user);
+        user.addChat(this);
+
+        return true;
+    }
+
+    //TODO: If this.participants empty - delete chat
+    public boolean removeParticipant(User user) {
+        if (isDirect) {
+            return false;
+        }
+
+        this.participants.remove(user);
+        user.removeChat(this);
+
+        return true;
     }
 }

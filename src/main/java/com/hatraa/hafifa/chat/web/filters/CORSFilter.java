@@ -1,4 +1,4 @@
-package com.hatraa.hafifa.chat.web.configuration;
+package com.hatraa.hafifa.chat.web.filters;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletResponse;

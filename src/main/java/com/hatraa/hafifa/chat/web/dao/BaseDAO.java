@@ -7,8 +7,8 @@ import java.io.Serializable;
 import java.util.List;
 
 public interface BaseDAO<T> {
-    List<T> getAll();
     T getById(int id);
-    Serializable save(T user);
+    T save(T obj);
     void delete(int id);
+    T update(T obj);
 }

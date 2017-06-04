@@ -1,15 +1,18 @@
-package com.hatraa.hafifa.chat.web.configuration;
+package com.hatraa.hafifa.chat.web.filters;
 
 import com.hatraa.hafifa.chat.model.User;
 import com.hatraa.hafifa.chat.services.AuthService;
 import com.hatraa.hafifa.chat.web.dao.User.UserDAO;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.SignatureException;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -33,12 +36,14 @@ public class JwtFilter implements Filter {
 
     @Override
     public void init(FilterConfig config) {
-        ServletContext servletContext = config.getServletContext();
+        /*ServletContext servletContext = config.getServletContext();
         WebApplicationContext webApplicationContext = WebApplicationContextUtils.getWebApplicationContext(servletContext);
 
         AutowireCapableBeanFactory autowireCapableBeanFactory = webApplicationContext.getAutowireCapableBeanFactory();
         autowireCapableBeanFactory.configureBean(this, "authService");
-        autowireCapableBeanFactory.configureBean(this, "userDAO");
+        autowireCapableBeanFactory.configureBean(this, "userDAO");*/
+        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this,
+                config.getServletContext());
     }
 
     @Override
@@ -64,7 +69,7 @@ public class JwtFilter implements Filter {
 
             try {
                 Claims claims = authService.decodeUser(token);
-                User currentUser = userDAO.getById(Integer.parseInt(claims.getSubject()));
+                User currentUser = userDAO.getEagerById(Integer.parseInt(claims.getSubject()));
                 request.setAttribute("user", currentUser);
             }
             catch (SignatureException ex) {

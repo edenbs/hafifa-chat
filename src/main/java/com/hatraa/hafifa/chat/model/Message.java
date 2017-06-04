@@ -13,7 +13,7 @@ public class Message implements Serializable {
     private Date sentTime;
     private User sender;
     private String text;
-    private int chatID;
+    private Integer chatID;
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MESSAGE_SEQ")
@@ -53,11 +53,11 @@ public class Message implements Serializable {
     }
 
     @Column(name = "CHAT_ID", nullable = false)
-    public int getChatID() {
+    public Integer getChatID() {
         return this.chatID;
     }
 
-    public void setChatID(int chatID) {
+    public void setChatID(Integer chatID) {
         this.chatID = chatID;
     }
 }
