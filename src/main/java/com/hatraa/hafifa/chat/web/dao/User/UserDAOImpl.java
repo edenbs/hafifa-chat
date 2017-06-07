@@ -24,19 +24,10 @@ import java.io.Serializable;
 import java.util.*;
 
 @Repository("userDAO")
-@Transactional
 public class UserDAOImpl implements UserDAO {
 
     @PersistenceContext
     private EntityManager entityManager;
-
-    public User getEagerById(int id) {
-        User user = getById(id);
-        Hibernate.initialize(user.getChats());
-        Session session = entityManager.unwrap(Session.class);
-        int sessionID = System.identityHashCode(session);
-        return user;
-    }
 
     public List<User> getAll() {
         return entityManager.createQuery("From User").getResultList();
@@ -45,8 +36,7 @@ public class UserDAOImpl implements UserDAO {
     public User getById(int id) {
         Query query =  entityManager.createQuery("From User where id=:id");
         query.setParameter("id", id);
-        Session session = entityManager.unwrap(Session.class);
-        int sessionID = System.identityHashCode(session);
+
         return (User)query.getSingleResult();
     }
 

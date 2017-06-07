@@ -1,6 +1,9 @@
 package com.hatraa.hafifa.chat.web.configuration;
 
+import com.hatraa.hafifa.chat.model.Chat;
+import com.hatraa.hafifa.chat.web.dto.objects.ChatDTO;
 import jdk.nashorn.internal.ir.debug.JSONWriter;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -15,4 +18,8 @@ import javax.servlet.FilterRegistration;
 @EnableWebMvc
 @ComponentScan(basePackages = "com.hatraa.hafifa.chat")
 public class ChatConfiguration  extends WebMvcConfigurerAdapter {
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
+    }
 }

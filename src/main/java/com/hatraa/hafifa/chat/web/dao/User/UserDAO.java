@@ -8,5 +8,4 @@ import java.util.List;
 public interface UserDAO extends BaseDAO<User> {
     List<User> getAll();
     User getByEmail(String email);
-    User getEagerById(int id);
 }

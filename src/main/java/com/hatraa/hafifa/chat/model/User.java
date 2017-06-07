@@ -113,7 +113,7 @@ public class User implements Serializable{
 
     public void addChat(Chat chat) {
         chats.add(chat);
-        chat.addParticipant(this);
+        chat.getParticipants().add(this);
     }
 
     public void removeChat(Chat chat) {

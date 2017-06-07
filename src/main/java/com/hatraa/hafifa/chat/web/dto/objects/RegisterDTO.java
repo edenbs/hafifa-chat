@@ -1,4 +1,4 @@
-package com.hatraa.hafifa.chat.web.dto;
+package com.hatraa.hafifa.chat.web.dto.objects;
 
 import java.io.Serializable;
 

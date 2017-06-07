@@ -5,6 +5,7 @@ import com.hatraa.hafifa.chat.model.Message;
 import com.hatraa.hafifa.chat.model.User;
 import com.hatraa.hafifa.chat.web.dao.Chat.ChatDAO;
 import com.hatraa.hafifa.chat.web.dao.User.UserDAO;
+import com.hatraa.hafifa.chat.web.dto.objects.ChatDTO;
 import io.jsonwebtoken.Claims;
 import javafx.geometry.Pos;
 import org.apache.log4j.helpers.DateTimeDateFormat;
@@ -13,6 +14,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.annotations.Entity;
 import org.hibernate.annotations.Filter;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -21,6 +23,7 @@ import org.springframework.http.client.OkHttp3ClientHttpRequestFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import sun.util.calendar.BaseCalendar;
 
@@ -28,14 +31,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-@Controller
 @RestController
-@RequestMapping("/chat")
 @Transactional
-public class ChatController {
+@RequestMapping("/chat")
+public class ChatController extends BaseController {
 
     @Autowired
     public ChatDAO chatDAO;
@@ -43,19 +46,24 @@ public class ChatController {
     @Autowired
     public UserDAO userDAO;
 
-    @PersistenceContext
-    EntityManager em;
+    @Autowired
+    ModelMapper mapper;
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity getChatsByUser(HttpServletRequest request) {
-        User currUser = (User)request.getAttribute("user");
-        List<Chat> chats = currUser.getChats();
-        return new ResponseEntity(chats, HttpStatus.OK);
+    public ResponseEntity getChatsByUser() {
+        List<Chat> chats = getCurrUser().getChats();
+        List<ChatDTO> chatsDTO = new ArrayList<ChatDTO>();
+
+        for (Chat chat:chats) {
+            chatsDTO.add(mapper.map(chat, ChatDTO.class));
+        }
+
+        return new ResponseEntity(chatsDTO, HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity createChat(@RequestBody Chat chat, HttpServletRequest request) {
-        User currUser = (User)request.getAttribute("user");
+    public ResponseEntity createChat(@RequestBody Chat chat) {
+        User currUser = getCurrUser();
         chat.addParticipant(currUser);
         chat = chatDAO.save(chat);
 
@@ -63,8 +71,8 @@ public class ChatController {
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/{id}")
-    public ResponseEntity addUserToChat(@RequestBody String email, @PathVariable("id") int id, HttpServletRequest request) {
-        User currUser = (User)request.getAttribute("user");
+    public ResponseEntity addUserToChat(@RequestBody String email, @PathVariable("id") int id) {
+        User currUser = getCurrUser();
         User userToAdd = userDAO.getByEmail(email);
         Chat chat = chatDAO.getById(id);
 
@@ -80,21 +88,14 @@ public class ChatController {
     }
 
     @RequestMapping(method = RequestMethod.POST, path= "/add")
-    public ResponseEntity addDummy(HttpServletRequest request) {
-        //User currUser = ((User) request.getAttribute("user"));
-        int currUserID = ((User) request.getAttribute("user")).getId();
-        /*User currUser = userDAO.getById(currUserID);
-        Hibernate.initialize(currUser.getChats());*/
-        User currUser = userDAO.getEagerById(currUserID);
+    public ResponseEntity addDummy() {
+        User currUser = getCurrUser();
         User userToAdd = userDAO.getById(1);
         User userToAdd2 = userDAO.getById(4);
         User userToAdd3 = userDAO.getById(3);
 
         Chat chat = new Chat();
         chat.setIsDirect(true);
-        //Hibernate.initialize(chat.getParticipants());
-        //Session session = (em.unwrap(Session.class)).getSessionFactory().openSession();
-        //TransactionSynchronizationManager.bindResource("session", session);
         chat.addParticipant(currUser);
         chat.addParticipant(userToAdd);
         chat = chatDAO.save(chat);

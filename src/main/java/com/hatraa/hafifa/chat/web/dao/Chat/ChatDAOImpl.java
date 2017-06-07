@@ -13,15 +13,10 @@ import java.io.Serializable;
 import java.util.List;
 
 @Repository("chatDAO")
-@Transactional
 public class ChatDAOImpl implements ChatDAO{
 
     @PersistenceContext
     private EntityManager entityManager;
-
-    /*public List<Chat> getChatsByUser(User user) {
-        return user.getChats();
-    }*/
 
     public Chat getById(int id) {
         Query query = entityManager.createQuery("From Chat chat where chat.id=:id");
@@ -32,8 +27,6 @@ public class ChatDAOImpl implements ChatDAO{
 
     public Chat save(Chat chat) {
         entityManager.persist(chat);
-        Session session = entityManager.unwrap(Session.class);
-        int sessionID = System.identityHashCode(session);
         return chat;
     }
 

@@ -2,31 +2,23 @@ package com.hatraa.hafifa.chat.web.controllers;
 
 import com.hatraa.hafifa.chat.model.User;
 import com.hatraa.hafifa.chat.services.AuthService;
-import com.hatraa.hafifa.chat.web.dao.BaseDAO;
 import com.hatraa.hafifa.chat.web.dao.User.UserDAO;
-import com.hatraa.hafifa.chat.web.dao.User.UserDAOImpl;
-import com.hatraa.hafifa.chat.web.dto.LoginDTO;
-import com.hatraa.hafifa.chat.web.dto.RegisterDTO;
+import com.hatraa.hafifa.chat.web.dto.objects.LoginDTO;
+import com.hatraa.hafifa.chat.web.dto.objects.RegisterDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.Serializable;
-import java.security.SecureRandom;
 import java.util.List;
 
-@Controller
 @RestController
-@RequestMapping("/user")
 @Transactional
-public class UserController {
+@RequestMapping("/user")
+public class UserController extends BaseController {
 
     @Autowired
     UserDAO userDAO;

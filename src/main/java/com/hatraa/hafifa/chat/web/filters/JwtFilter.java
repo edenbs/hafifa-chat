@@ -31,17 +31,8 @@ public class JwtFilter implements Filter {
     @Autowired
     AuthService authService;
 
-    @Autowired
-    UserDAO userDAO;
-
     @Override
     public void init(FilterConfig config) {
-        /*ServletContext servletContext = config.getServletContext();
-        WebApplicationContext webApplicationContext = WebApplicationContextUtils.getWebApplicationContext(servletContext);
-
-        AutowireCapableBeanFactory autowireCapableBeanFactory = webApplicationContext.getAutowireCapableBeanFactory();
-        autowireCapableBeanFactory.configureBean(this, "authService");
-        autowireCapableBeanFactory.configureBean(this, "userDAO");*/
         SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this,
                 config.getServletContext());
     }
@@ -69,8 +60,7 @@ public class JwtFilter implements Filter {
 
             try {
                 Claims claims = authService.decodeUser(token);
-                User currentUser = userDAO.getEagerById(Integer.parseInt(claims.getSubject()));
-                request.setAttribute("user", currentUser);
+                request.setAttribute("userID", Integer.parseInt(claims.getSubject()));
             }
             catch (SignatureException ex) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

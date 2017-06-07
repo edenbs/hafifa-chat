@@ -34,7 +34,8 @@ public class Chat implements Serializable {
     @JoinTable(
             name = "USER_CHAT",
             joinColumns = { @JoinColumn(name = "CHAT_ID", referencedColumnName = "ID")},
-            inverseJoinColumns = { @JoinColumn(name = "USER_ID", referencedColumnName = "ID", unique = true) }
+            inverseJoinColumns = { @JoinColumn(name = "USER_ID", referencedColumnName = "ID") },
+            uniqueConstraints = { @UniqueConstraint(columnNames = {"USER_ID", "CHAT_ID"})}
     )
     public List<User> getParticipants() {
         return participants;
@@ -46,7 +47,7 @@ public class Chat implements Serializable {
 
     @Column(name="NAME", nullable = true)
     public String getName(){
-        return name;
+        return this.name;
     }
 
     public void setName(String name) {
@@ -89,7 +90,7 @@ public class Chat implements Serializable {
         }
 
         this.participants.add(user);
-        user.addChat(this);
+        user.getChats().add(this);
 
         return true;
     }
